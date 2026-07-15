@@ -6,7 +6,10 @@ WORKDIR /app
 
 COPY backports/apply_1_0_2_llm_base_url_backport.py /tmp/apply_1_0_2_llm_base_url_backport.py
 
-RUN pip install --no-cache-dir "cisco-ai-skill-scanner==${SKILL_SCANNER_VERSION}" && \
+RUN apk add --no-cache libgcc libstdc++ && \
+    apk add --no-cache --virtual .scanner-build-deps build-base cargo && \
+    pip install --no-cache-dir "cisco-ai-skill-scanner==${SKILL_SCANNER_VERSION}" && \
+    apk del .scanner-build-deps && \
     python /tmp/apply_1_0_2_llm_base_url_backport.py /usr/local/lib/python3.11/site-packages && \
     rm /tmp/apply_1_0_2_llm_base_url_backport.py && \
     addgroup -S app && \
